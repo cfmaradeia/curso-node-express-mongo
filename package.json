@@ -1,0 +1,17 @@
+{
+  "name": "curso-node-express-mongo",
+  "version": "1.0.0",
+  "description": "Módulo de primeiros passos no curso de Node.js",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev":"nodemon server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
