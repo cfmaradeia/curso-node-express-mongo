@@ -8,10 +8,15 @@
 
 ## Executar projeto
  1. Subir o container com mongoDB
- > docker-compose up -d
- 
+ ```bash
+docker-compose up -d
+```
+
  2. Executar a aplicação 
- > npm run dev
+```bash
+npm run dev
+ ```
+
 
 
 
