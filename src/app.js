@@ -1,4 +1,18 @@
 import express from "express";
+import connectDatabase from "./config/dbConnect.js";
+import livro from "./models/Livro.js";
+
+
+const conexao = await connectDatabase();
+
+conexao.on("error", (erro) => {
+    console.error("Erro de conexão", erro);
+});
+
+conexao.once("open", () => {
+    console.log("Conexão realizada com sucesso");
+})
+
 
 const app = express();
 app.use(express.json())
@@ -19,8 +33,9 @@ app.get("/", (req, res) => {
     res.status(200).send("Livraria")
 });
 
-app.get("/livros", (req, res) => {
-    res.status(200).json(livros)
+app.get("/livros", async (req, res) => {
+    const listaLivros = await livro.find({});
+    res.status(200).json(listaLivros);
 });
 
 app.get("/livros/:id", (req, res) => {
