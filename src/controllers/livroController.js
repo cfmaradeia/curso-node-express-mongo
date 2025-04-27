@@ -1,3 +1,4 @@
+import { autor } from "../models/Autor.js";
 import livro from "../models/Livro.js";
 
 class LivroController {
@@ -6,6 +7,16 @@ class LivroController {
     static async listarLivros (req, res){
         try {
             const listaLivros = await livro.find({});
+            res.status(200).json(listaLivros);            
+        } catch (error) {
+            res.status(500).json({message: `Erro ao listar livros - ${erro.message}`});
+        }
+    };
+
+    static async buscarLivros (req, res){
+        try {
+            const qEditora = req.query.editora;
+            const listaLivros = await livro.find({editora : qEditora});
             res.status(200).json(listaLivros);            
         } catch (error) {
             res.status(500).json({message: `Erro ao listar livros - ${erro.message}`});
@@ -23,18 +34,26 @@ class LivroController {
     };
 
     static async cadastrarLivro(req, res){
+        const novoLivro = req.body;
         try{
-            const novoLivro = await livro.create(req.body);
-            res.status(201).json(novoLivro);
+            const autorEncontrado = await autor.findById(novoLivro.autor);
+            const livroCompleto = {...novoLivro, autor: {...autorEncontrado._doc}}
+            const livroCriado = await livro.create(livroCompleto);
+            res.status(201).json(livroCriado);
         } catch (erro) {
             res.status(500).json({message: `Erro ao criar o livro - ${erro.message}`});
         }        
     };
 
     static async atualizarLivro(req, res){
+
+        const id = req.params.id;
+        const dadosLivro = req.body;
         try {
-            const id = req.params.id;
-            await livro.findByIdAndUpdate(id, req.body);
+            const autorEncontrado = await autor.findById(dadosLivro.autor);
+            const livroCompleto = {...dadosLivro, autor: {...autorEncontrado._doc}}
+
+            await livro.findByIdAndUpdate(id, livroCompleto);
             const livroAtualizado = await livro.findById(id);
             res.status(200).json(livroAtualizado);            
         } catch (error) {
