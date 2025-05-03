@@ -17,6 +17,11 @@ docker-compose up -d
 npm run dev
  ```
 
+ Para executar o lint 
+```bash
+npx eslint . --fix
+```
+
 
 
 

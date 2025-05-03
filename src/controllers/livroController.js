@@ -9,7 +9,7 @@ class LivroController {
             const listaLivros = await livro.find({});
             res.status(200).json(listaLivros);            
         } catch (error) {
-            res.status(500).json({message: `Erro ao listar livros - ${erro.message}`});
+            res.status(500).json({message: `Erro ao listar livros - ${error.message}`});
         }
     };
 
@@ -19,7 +19,7 @@ class LivroController {
             const listaLivros = await livro.find({editora : qEditora});
             res.status(200).json(listaLivros);            
         } catch (error) {
-            res.status(500).json({message: `Erro ao listar livros - ${erro.message}`});
+            res.status(500).json({message: `Erro ao listar livros - ${error.message}`});
         }
     };
 
@@ -29,7 +29,7 @@ class LivroController {
             const livroEncontrado = await livro.findById(id);
             res.status(200).json(livroEncontrado);            
         } catch (error) {
-            res.status(500).json({message: `Erro ao buscar livro - ${erro.message}`});
+            res.status(500).json({message: `Erro ao buscar livro - ${error.message}`});
         }
     };
 
@@ -40,8 +40,8 @@ class LivroController {
             const livroCompleto = {...novoLivro, autor: {...autorEncontrado._doc}}
             const livroCriado = await livro.create(livroCompleto);
             res.status(201).json(livroCriado);
-        } catch (erro) {
-            res.status(500).json({message: `Erro ao criar o livro - ${erro.message}`});
+        } catch (error) {
+            res.status(500).json({message: `Erro ao criar o livro - ${error.message}`});
         }        
     };
 
@@ -57,7 +57,7 @@ class LivroController {
             const livroAtualizado = await livro.findById(id);
             res.status(200).json(livroAtualizado);            
         } catch (error) {
-            res.status(500).json({message: `Erro ao atualizar o livro - ${erro.message}`});
+            res.status(500).json({message: `Erro ao atualizar o livro - ${error.message}`});
         }
     };
 
@@ -67,7 +67,7 @@ class LivroController {
             await livro.findByIdAndDelete(id);
             res.status(200).json({message: `Livro deletado`});
         } catch (error) {
-            res.status(500).json({message: `Erro ao deletar o livro - ${erro.message}`});
+            res.status(500).json({message: `Erro ao deletar o livro - ${error.message}`});
         }
     };
 

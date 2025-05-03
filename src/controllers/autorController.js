@@ -3,52 +3,58 @@ import {autor} from "../models/Autor.js";
 class AutorController {
 
 
-    static async listarAutores (req, res){
+    static async listarAutores (req, res, next){
         try {
             const listarAutores = await autor.find({});
             res.status(200).json(listarAutores);            
         } catch (error) {
-            res.status(500).json({message: `Erro ao listar autores - ${erro.message}`});
+            next(error);
         }
     };
 
-    static async buscarAutorPorId (req, res){
+    static async buscarAutorPorId (req, res, next){
         try {
             const id = req.params.id;
             const autorEncontrado = await autor.findById(id);
-            res.status(200).json(autorEncontrado);
+
+            if (autorEncontrado !== null){
+                res.status(200).json(autorEncontrado);
+            } else {
+                res.status(404).json({message: "Autor não encontrado"});    
+            }
+            
         } catch (error) {
-            res.status(500).json({message: `Erro ao buscar autor - ${erro.message}`});
+            next(error);
         }
     };
 
-    static async cadastrarAutor(req, res){
+    static async cadastrarAutor(req, res, next){
         try{
             const novoAutor = await autor.create(req.body);
             res.status(201).json(novoAutor);
-        } catch (erro) {
-            res.status(500).json({message: `Erro ao criar o autor - ${erro.message}`});
+        } catch (error) {
+            next(error);
         }        
     };
 
-    static async atualizarAutor(req, res){
+    static async atualizarAutor(req, res, next){
         try {
             const id = req.params.id;
             await autor.findByIdAndUpdate(id, req.body);
             const autorAtualizado = await autor.findById(id);
             res.status(200).json(autorAtualizado);            
         } catch (error) {
-            res.status(500).json({message: `Erro ao atualizar o autor - ${erro.message}`});
+            next(error);
         }
     };
 
-    static async excluirAutor(req, res){
+    static async excluirAutor(req, res, next){
         try {
             const id = req.params.id;
             await autor.findByIdAndDelete(id);
             res.status(200).json({message: `Autor deletado`});
         } catch (error) {
-            res.status(500).json({message: `Erro ao deletar o autor - ${erro.message}`});
+            next(error);
         }
     };
 
