@@ -35,18 +35,18 @@ class LivroController {
                 next(new NaoEncontrado("Livro não encontrado"))
             }
         } catch (error) {
-            res.status(500).json({message: `Erro ao buscar livro - ${error.message}`});
+            next(error);
         }
     };
 
-    static async cadastrarLivro(req, res){
+    static async cadastrarLivro(req, res, next){
         try{
             let livro = new livros(req.body);
 
             const livroResultado = await livro.save();
             res.status(201).json(livroResultado);
         } catch (error) {
-            res.status(500).json({message: `Erro ao criar o livro - ${error.message}`});
+            next(error);
         }        
     };
 
@@ -64,7 +64,7 @@ class LivroController {
                 next(new NaoEncontrado("Livro não encontrado"))
             }
         } catch (error) {
-            res.status(500).json({message: `Erro ao atualizar o livro - ${error.message}`});
+            next(error);
         }
     };
 
@@ -79,7 +79,7 @@ class LivroController {
                 next(new NaoEncontrado("Livro não encontrado"))
             }
         } catch (error) {
-            res.status(500).json({message: `Erro ao deletar o livro - ${error.message}`});
+            next(error);
         }
     };
 
