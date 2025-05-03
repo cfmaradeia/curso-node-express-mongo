@@ -1,12 +1,13 @@
-import { autor } from "../models/Autor.js";
-import livro from "../models/Livro.js";
+
+import NaoEncontrado from "../errors/NaoEncontrado.js";
+import livros from "../models/Livro.js";
 
 class LivroController {
 
 
     static async listarLivros (req, res){
         try {
-            const listaLivros = await livro.find({});
+            const listaLivros = await livros.find({});
             res.status(200).json(listaLivros);            
         } catch (error) {
             res.status(500).json({message: `Erro ao listar livros - ${error.message}`});
@@ -16,56 +17,67 @@ class LivroController {
     static async buscarLivros (req, res){
         try {
             const qEditora = req.query.editora;
-            const listaLivros = await livro.find({editora : qEditora});
+            const listaLivros = await livros.find({editora : qEditora});
             res.status(200).json(listaLivros);            
         } catch (error) {
             res.status(500).json({message: `Erro ao listar livros - ${error.message}`});
         }
     };
 
-    static async buscarLivrosPorId (req, res){
+    static async buscarLivrosPorId (req, res, next){
         try {
             const id = req.params.id;
-            const livroEncontrado = await livro.findById(id);
-            res.status(200).json(livroEncontrado);            
+            const livroEncontrado = await livros.findById(id);
+            
+            if (livroEncontrado !== null){
+                res.status(200).json(livroEncontrado);
+            } else {
+                next(new NaoEncontrado("Livro não encontrado"))
+            }
         } catch (error) {
             res.status(500).json({message: `Erro ao buscar livro - ${error.message}`});
         }
     };
 
     static async cadastrarLivro(req, res){
-        const novoLivro = req.body;
         try{
-            const autorEncontrado = await autor.findById(novoLivro.autor);
-            const livroCompleto = {...novoLivro, autor: {...autorEncontrado._doc}}
-            const livroCriado = await livro.create(livroCompleto);
-            res.status(201).json(livroCriado);
+            let livro = new livros(req.body);
+
+            const livroResultado = await livro.save();
+            res.status(201).json(livroResultado);
         } catch (error) {
             res.status(500).json({message: `Erro ao criar o livro - ${error.message}`});
         }        
     };
 
-    static async atualizarLivro(req, res){
+    static async atualizarLivro(req, res, next){
 
-        const id = req.params.id;
-        const dadosLivro = req.body;
-        try {
-            const autorEncontrado = await autor.findById(dadosLivro.autor);
-            const livroCompleto = {...dadosLivro, autor: {...autorEncontrado._doc}}
+        try {            
+            const id = req.params.id;
+    
+            const livroEncontrado = await livros.findByIdAndUpdate(id, {$set: req.body});
 
-            await livro.findByIdAndUpdate(id, livroCompleto);
-            const livroAtualizado = await livro.findById(id);
-            res.status(200).json(livroAtualizado);            
+            if (livroEncontrado !== null){
+                const livroAtualizado = await livros.findById(id);
+                res.status(200).json(livroAtualizado);
+            } else {
+                next(new NaoEncontrado("Livro não encontrado"))
+            }
         } catch (error) {
             res.status(500).json({message: `Erro ao atualizar o livro - ${error.message}`});
         }
     };
 
-    static async excluirLivro(req, res){
+    static async excluirLivro(req, res, next){
         try {
             const id = req.params.id;
-            await livro.findByIdAndDelete(id);
-            res.status(200).json({message: `Livro deletado`});
+            const livroEncontrado = await livros.findByIdAndDelete(id);
+
+            if (livroEncontrado !== null){
+                res.status(200).json({message: `Livro deletado`});
+            } else {
+                next(new NaoEncontrado("Livro não encontrado"))
+            }
         } catch (error) {
             res.status(500).json({message: `Erro ao deletar o livro - ${error.message}`});
         }

@@ -41,7 +41,12 @@ class AutorController {
     static async atualizarAutor(req, res, next){
         try {
             const id = req.params.id;
-            await autor.findByIdAndUpdate(id, req.body);
+            const autorEncontrado = await autor.findByIdAndUpdate(id, req.body);
+
+            if (autorEncontrado === null){
+                next(new NaoEncontrado("Autor não encontrado"))
+            }
+
             const autorAtualizado = await autor.findById(id);
             res.status(200).json(autorAtualizado);            
         } catch (error) {
@@ -52,7 +57,12 @@ class AutorController {
     static async excluirAutor(req, res, next){
         try {
             const id = req.params.id;
-            await autor.findByIdAndDelete(id);
+            const autorEncontrado = await autor.findByIdAndDelete(id);
+
+            if (autorEncontrado === null){
+                next(new NaoEncontrado("Autor não encontrado"))
+            }
+
             res.status(200).json({message: `Autor deletado`});
         } catch (error) {
             next(error);

@@ -2,8 +2,8 @@
 import express from "express";
 import connectDatabase from "./config/dbConnect.js";
 import routes from "./routes/index.js";
-import mongoose from "mongoose";
 import manipuladorDeErros from "./middlewares/manipuladorErros.js";
+import manipulador404 from "./middlewares/manipulador404.js";
 
 
 const conexao = await connectDatabase();
@@ -24,7 +24,7 @@ app.use((req, res, next) => {
 });
 routes(app);
 
-
+app.use(manipulador404);
 app.use(manipuladorDeErros);
 
 export default app;
