@@ -5,35 +5,31 @@ import {autor, livro} from "../models/index.js";
 class LivroController {
 
 
-    static async listarLivros (req, res){
+    static async listarLivros (req, res, next){
         try {
-            const {limite = 2, pagina = 1} = req.query;           
-
-            const listaLivros = await livro.find({})
-                .skip((pagina - 1) * limite)
-                .limit(limite);
-                
-            res.status(200).json(listaLivros);            
+            const buscaLivros = livro.find();
+            req.resultado = buscaLivros;
+            next();           
         } catch (error) {
-            res.status(500).json({message: `Erro ao listar livros - ${error.message}`});
+            next(error);
         }
     };
 
-    static async buscarLivros (req, res){
+    static async buscarLivros (req, res, next){
         try {
             const busca = await processaBusca(req.query);
 
             if (busca !== null) {
-                const livrosResultado = await livro
-                .find(busca)
-                .populate("autor");
-
-                res.status(200).send(livrosResultado);
+                const livrosResultado = livro.find(busca).populate("autor");
+        
+                req.resultado = livrosResultado;
+        
+                next();
             } else {
-                res.status(200).send([]);
-            }           
+            res.status(200).send([]);
+            }    
         } catch (error) {
-            res.status(500).json({message: `Erro ao listar livros - ${error.message}`});
+            next(error);
         }
     };
 
